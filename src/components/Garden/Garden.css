@@ -1,0 +1,207 @@
+.garden-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.layer-air,
+.layer-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
+}
+
+.layer-air {
+  z-index: 1;
+}
+
+.chimney-layer {
+  position: absolute;
+  top: 0%;
+  left: 18%;
+  z-index: 3;
+}
+
+.smoke {
+  position: absolute;
+  width: 50px;
+  height: 60px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  animation: smokeAnim 6s infinite ease-in-out;
+  opacity: 0;
+}
+
+.s2 {
+  animation-delay: 1.5s;
+}
+
+@keyframes smokeAnim {
+  0% {
+    transform: translateY(25px) scale(0.9);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 0.8;
+  }
+
+  90% {
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(-25px) scale(1.1);
+    opacity: 0;
+  }
+}
+
+.cloud-layer {
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: contain;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.8;
+}
+
+.cloud-layer-1 {
+  top: -2%;
+  left: -10%;
+  width: 75%;
+  height: 75%;
+  animation: floatCloud1 45s linear infinite;
+}
+
+.cloud-layer-2 {
+  top: -2%;
+  left: -5%;
+  width: 75%;
+  height: 75%;
+  animation: floatCloud2 45s linear infinite;
+  animation-delay: -20s;
+}
+
+.cloud-layer-3 {
+  top: 5%;
+  right: -20%;
+  width: 60%;
+  height: 60%;
+  animation: floatCloudReverse 55s linear infinite;
+  opacity: 0.7;
+}
+
+.cloud-layer-4 {
+  top: -1%;
+  right: -10%;
+  width: 50%;
+  height: 50%;
+  animation: floatCloudReverse 65s linear infinite;
+  animation-delay: -30s;
+  opacity: 0.6;
+}
+
+.layer-background {
+  z-index: 3;
+}
+
+@keyframes floatCloud1 {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(300%);
+  }
+
+}
+
+@keyframes floatCloud2 {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(300%);
+  }
+}
+
+@keyframes floatCloudReverse {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(-300%);
+  }
+}
+
+/* XP Bar Styles */
+.xp-container {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  left: auto;
+  transform: none;
+  z-index: 10;
+  width: 180px;
+  pointer-events: auto;
+}
+
+.xp-bar-bg {
+  width: 100%;
+  height: 24px;
+  background-color: rgba(0, 0, 0, 0.4);
+  border: 2px solid #2e7d32;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.xp-bar-fill {
+  background: linear-gradient(90deg, #4caf50, #8bc34a);
+  height: 100%;
+  width: 0%;
+  transition: width 0.5s ease-out;
+  border-right: 1px solid #a5d6a7;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.xp-text-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8px;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+.lvl-text,
+.progress-text {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: #fff;
+  text-shadow: 1px 1px 0 #000;
+  line-height: 1;
+}

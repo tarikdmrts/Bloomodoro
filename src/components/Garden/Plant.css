@@ -1,0 +1,55 @@
+.plant {
+  position: absolute;
+  width: 48px;
+  height: 50px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  transform: translate(-50%, -100%);
+  animation-name: jitter;
+  animation-duration: 1.8s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  cursor: pointer;
+  z-index: 9999;
+  pointer-events: auto;
+}
+
+.plant.stage-1 {
+  background-image: url('../../assets/plant-stage-1.png');
+  width: 30px;
+  height: 25px;
+}
+
+.plant.stage-2 {
+  background-image: url('../../assets/plant-stage-2.png');
+  width: 30px;
+  height: 25px;
+}
+
+.plant.stage-3 {
+  background-image: url('../../assets/plant-stage-3.png');
+  width: 40px;
+  height: 35px;
+}
+
+.plant.stage-4 {
+  background-image: url('../../assets/plant-stage-4.png');
+}
+
+@keyframes jitter {
+  0% {
+    background-position: 0 0;
+  }
+
+  33% {
+    background-position: 1px 0;
+  }
+
+  66% {
+    background-position: 0 1px;
+  }
+
+  100% {
+    background-position: 0 0;
+  }
+}
