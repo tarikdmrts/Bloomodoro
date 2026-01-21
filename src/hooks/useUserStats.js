@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchStorage, storageListener, updateStorage } from '../utils/storage';
+import { fetchStorage, storageListener, updateStorage, migrateLocalToSync } from '../utils/storage';
 
 export function useUserStats() {
     const [todaySessions, setTodaySessions] = useState(0);
@@ -10,15 +10,17 @@ export function useUserStats() {
     const [bonusXP, setBonusXP] = useState(0);
 
     useEffect(() => {
-        fetchStorage(["todaySessions", "totalFocusTime", "plantCount", "gardenPlants", "notificationsEnabled", "bonusXP"])
-            .then((result) => {
-                setTodaySessions(result.todaySessions || 0);
-                setTotalFocusTime(result.totalFocusTime || 0);
-                setPlantCount(result.plantCount || 0);
-                setGardenPlants(result.gardenPlants || []);
-                setNotificationsEnabled(result.notificationsEnabled !== false);
-                setBonusXP(result.bonusXP || 0);
-            });
+        migrateLocalToSync().then(() => {
+            fetchStorage(["todaySessions", "totalFocusTime", "plantCount", "gardenPlants", "notificationsEnabled", "bonusXP"])
+                .then((result) => {
+                    setTodaySessions(result.todaySessions || 0);
+                    setTotalFocusTime(result.totalFocusTime || 0);
+                    setPlantCount(result.plantCount || 0);
+                    setGardenPlants(result.gardenPlants || []);
+                    setNotificationsEnabled(result.notificationsEnabled !== false);
+                    setBonusXP(result.bonusXP || 0);
+                });
+        });
 
         const removeListener = storageListener((changes) => {
             if (changes.plantCount) setPlantCount(changes.plantCount.newValue);
