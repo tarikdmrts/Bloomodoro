@@ -23,7 +23,16 @@ export const useTimer = () => {
       });
 
     const listener = (changes) => {
-      if (changes.isRunning) setIsRunning(changes.isRunning.newValue);
+      if (changes.isRunning) {
+        setIsRunning(changes.isRunning.newValue);
+        if (changes.isRunning.newValue === false) {
+          fetchStorage(["remainingTime", "sessionDuration"]).then(result => {
+            if (!result.remainingTime || result.remainingTime <= 0) {
+              setSeconds(result.sessionDuration || totalDuration);
+            }
+          });
+        }
+      }
       if (changes.sessionDuration) setTotalDuration(changes.sessionDuration.newValue);
     };
     chrome.storage.onChanged.addListener(listener);
@@ -51,6 +60,7 @@ export const useTimer = () => {
   }, [isRunning]);
 
   const startTimer = (durationSeconds, totalDurationOverride = null) => {
+    if (durationSeconds <= 0) return;
     const targetTime = Date.now() + durationSeconds * 1000;
 
     const newTotalDuration = totalDurationOverride || durationSeconds;
@@ -72,8 +82,12 @@ export const useTimer = () => {
   const handleStartPause = () => {
     if (!isRunning) {
       fetchStorage(["remainingTime", "sessionDuration"]).then((result) => {
-        const durationSeconds = result.remainingTime || seconds;
-        const storedTotalDuration = result.sessionDuration || totalDuration;
+        let durationSeconds = result.remainingTime || seconds;
+        let storedTotalDuration = result.sessionDuration || totalDuration;
+
+        if (durationSeconds <= 0) {
+          durationSeconds = storedTotalDuration || 25 * 60;
+        }
 
         const totalDurationToUse = storedTotalDuration ? Number(storedTotalDuration) : durationSeconds;
 
@@ -115,9 +129,10 @@ export const useTimer = () => {
   const handleEndSession = () => {
     chrome.alarms.clear("focusTimer");
 
-    fetchStorage(["targetTime", "sessionDuration"]).then((result) => {
-      let elapsedSeconds = 0;
+    fetchStorage(["targetTime", "sessionDuration", "isRunning"]).then((result) => {
+      if (!result.isRunning && !result.targetTime) return;
 
+      let elapsedSeconds = 0;
       if (result.targetTime) {
         const now = Date.now();
         const totalDurationMs = (result.sessionDuration || totalDuration) * 1000;
@@ -127,22 +142,27 @@ export const useTimer = () => {
         elapsedSeconds = Math.max(0, totalDuration - seconds);
       }
 
-      updateStorage({ sessionDuration: elapsedSeconds }).then(() => {
+      updateStorage({
+        isRunning: false,
+        targetTime: null,
+        sessionDuration: elapsedSeconds
+      }).then(() => {
         chrome.alarms.create("focusTimer", { when: Date.now() });
 
         setTimeout(() => {
           const resetDuration = 25 * 60;
           updateStorage({
             sessionDuration: resetDuration,
-            remainingTime: resetDuration
+            remainingTime: resetDuration,
+            isRunning: false,
+            targetTime: null
           });
-        }, 100);
+          setSeconds(resetDuration);
+          setTotalDuration(resetDuration);
+          setIsRunning(false);
+        }, 200);
       });
     });
-
-    setSeconds(25 * 60);
-    setTotalDuration(25 * 60);
-    setIsRunning(false);
   };
 
   const handleDurationSelect = (mins) => {

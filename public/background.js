@@ -69,9 +69,13 @@ chrome.alarms.onAlarm.addListener((alarm) => {
     checkDailyReset();
   } else if (alarm.name === "focusTimer") {
 
-    chrome.storage.local.get(["todaySessions", "totalFocusTime", "plantCount", "gardenPlants", "sessionDuration", "notificationsEnabled"], (result) => {
-      const newSessions = (result.todaySessions || 0) + 1;
+    chrome.storage.local.get(["todaySessions", "totalFocusTime", "plantCount", "gardenPlants", "sessionDuration", "notificationsEnabled", "bonusXP"], (result) => {
       const sessionDurationMinutes = (result.sessionDuration || 0) / 60;
+      if (sessionDurationMinutes <= 0) {
+        chrome.storage.local.set({ isRunning: false, targetTime: null, remainingTime: null });
+        return;
+      }
+      const newSessions = (result.todaySessions || 0) + 1;
       const newFocusTime = (result.totalFocusTime || 0) + sessionDurationMinutes;
       const notificationsEnabled = result.notificationsEnabled !== false;
 
